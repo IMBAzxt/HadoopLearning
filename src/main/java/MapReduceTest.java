@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.IOException;
 
 /**
+ * MapReduce 学习，运行方法：将jar包放在hadoop集群的机器上执行hadoop jar HadoopLearning-1.0-SNAPSHOT.jar MapReduceTest /data/input/test /data/input/1 2
  * @author zhengxt
  */
 public class MapReduceTest {
@@ -17,8 +18,12 @@ public class MapReduceTest {
         Job job = Job.getInstance(conf,"word count");
         job.setJarByClass(MapReduceTest.class);
         job.setMapperClass(MyMapper.class);
+        //设置自定义分区方法。
+        job.setPartitionerClass(MyPartitioner.class);
         job.setCombinerClass(MyReduce.class);
         job.setReducerClass(MyReduce.class);
+        //设置最大的reduce数。
+        job.setNumReduceTasks(Integer.parseInt(args[2]));
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
         FileInputFormat.addInputPath(job,new Path(args[0]));
